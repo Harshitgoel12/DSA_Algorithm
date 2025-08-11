@@ -44,6 +44,23 @@ time and space complexity to build segment tree   ---> sc= O(2*n) and the tc= O(
 suppose we want to do some modification on query suppose we are solving a problem sum range and each query we change the value of
 of element to handle the change we need to implement the upldate query
 
+
+void updateRange(int index,int val,int i,int l,int r,vector<int>&segmentTree){
+    if(l==r){
+        segmentTree[i]=val;
+        return;
+    }
+    int mid=l+(r-l)/2;
+    if(index<=mid){
+        updateRange(index,val,2*i+1,l,mid,segmentTree);
+    }
+    else updateRange(index,val,2*i+2,mid+1,r,segmentTree);
+    
+    segmentTree[i]=segmentTree[2*i+1]+segmentTree[2*i+2];
+}
+
+
+
 time complexity will be O(log(n))
 
 
