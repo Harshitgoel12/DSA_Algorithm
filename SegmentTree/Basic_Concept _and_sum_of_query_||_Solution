@@ -1,0 +1,152 @@
+suppose you have given an aaray you have to find the sum of particular range for every query means for query based problem think  about the segment tree .
+or the question could be find the min in the particular range max element in range,product in range , average in particular range
+
+an efficient data structure that allows efficient querying of intervals/range or efficient updating of intervals/range 
+
+
+How to build segment tree
+
+3 1 2 7 1    //here we take the example of sum  of elements in perticular range in segment tree
+
+
+root says i am repsenting the range of whole element sum  which is 14
+now find the mid in array  then [0,mid] belongs to left side 
+and the remaing one represent the right part [mid,end]
+we do this thing until we donot get the single  element
+
+always the height of segement tree is ceil of O(log(n))
+the difference between any two subtree  height is less then equal to 1 this concept is called balanced binary tree
+
+
+
+How many nodes are required to represent the a segment tree
+ (2*N) Nodes are required
+
+
+how to construct tree
+create a root node which is the middle one
+and for forming the left part do  builtTree(2*i+1,l,mid)
+and for the right part do  builtTree(2*i+2,mid+1,r)
+
+
+
+time and space complexity to build segment tree   ---> sc= O(2*n) and the tc= O(N)
+
+
+
+
+
+
+
+
+---------------------------------------->  update segment tree  <-------------------------------------------
+
+suppose we want to do some modification on query suppose we are solving a problem sum range and each query we change the value of
+of element to handle the change we need to implement the upldate query
+
+time complexity will be O(log(n))
+
+
+
+-------------------------------------------> generate answer <-----------------------------------------------------
+
+// for a getting the output for particular range we do the below things
+
+1)   if out of bound then  we return 0 means a particular range is not in our given range
+that means:
+         if(l>end||r<start)return 0;
+
+2)  if the [l,r] is entirely inside the range [start,end]
+
+then return segTree[i];    // means return the currect node value
+
+if(l>=start&&r<=end)return segTree[i];
+
+
+3)  if their is an case of overlapping then do
+ return query(leftvalue) + query(rightvalue)
+
+
+
+time complexity is ---> O(log(n))
+
+
+
+
+
+
+
+
+
+
+
+
+
+//range sum query ||
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void buildSegmentTree(int i,int l,int r,vector<int>&segmentTree,int arr[]){
+    if(l==r){ 
+segmentTree[i]=arr[l];
+return ;
+}
+    
+    int mid= l+(r-l)/2;
+    buildSegmentTree(2*i+1,l,mid,segmentTree,arr);
+    buildSegmentTree(2*i+2,mid+1,r,segmentTree,arr);
+     segmentTree[i]=segmentTree[2*i+1]+segmentTree[2*i+2];
+}
+int Query(int start,int end,int i,int l,int r,vector<int>&segmentTree){
+    if(l>end||r<start)return 0;
+    if(l>=start&&r<=end)return segmentTree[i];
+      int mid=l+(r-l)/2;
+      return Query(start,end,2*i+1,l,mid,segmentTree)+Query(start,end,2*i+2,mid+1,r,segmentTree);
+}
+
+vector<int>querySum(int n,int arr[], int q,int queries[]){
+    vector<int>segmentTree(4*n);
+    buildSegmentTree(0,0,n-1,segmentTree,arr);
+    vector<int>result;
+    for(int i=0;i<2*q;i+=2){
+        int start=queries[i]-1;
+        int end=queries[i+1]-1;
+        result.push_back(Query(start,end,0,0,n-1,segmentTree));
+    }
+    return result;
+}
+int main() {
+    
+int n=4;
+int arr[4]={1,2,3,4};
+int q=2;
+int queries[4]={1,4,2,3};
+vector<int>ans=querySum(n,arr,q,queries);
+for(int i=0;i<ans.size();i++){
+    cout<<ans[i]<<endl;
+}
+   
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
